@@ -6,8 +6,8 @@ module.exports = {
       `insert into registration(firstName, lastName, gender, email, password, number) 
                 values(?,?,?,?,?,?)`,
       [
-        data.first_name,
-        data.last_name,
+        data.firstName,
+        data.lastName,
         data.gender,
         data.email,
         data.password,
@@ -61,8 +61,8 @@ module.exports = {
     pool.query(
       `update registration set firstName=?, lastName=?, gender=?, email=?, password=?, number=? where id = ?`,
       [
-        data.first_name,
-        data.last_name,
+        data.firstName,
+        data.lastName,
         data.gender,
         data.email,
         data.password,
@@ -80,7 +80,7 @@ module.exports = {
   deleteUser: (data, callBack) => {
     pool.query(
       `delete from registration where id = ?`,
-      [data.id],
+      [data],
       (error, results, fields) => {
         if (error) {
           callBack(error);

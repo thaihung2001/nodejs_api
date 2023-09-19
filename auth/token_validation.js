@@ -2,14 +2,15 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   checkToken: (req, res, next) => {
     let token = req.get("authorization");
+    //console.log(token); return
     if (token) {
       // Remove Bearer from string
       token = token.slice(7);
-      jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+      jwt.verify(token, process.env.JWT, (err, decoded) => {
         if (err) {
           return res.json({
             success: 0,
-            message: "Invalid Token..."
+            message: "Hành động chưa xác thực nên thất bại"
           });
         } else {
           req.decoded = decoded;
@@ -19,7 +20,7 @@ module.exports = {
     } else {
       return res.json({
         success: 0,
-        message: "Access Denied! Unauthorized User"
+        message: "Từ chối truy cập"
       });
     }
   }

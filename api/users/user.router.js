@@ -4,15 +4,17 @@ const {
   createUser,
   login,
   getUserByUserId,
+  getUserByUserEmail,
   getUsers,
   updateUsers,
   deleteUser
 } = require("./user.controller");
-router.get("/", checkToken, getUsers);
-router.post("/", checkToken, createUser);
-router.get("/:id", checkToken, getUserByUserId);
-router.post("/login", login);
-router.patch("/", checkToken, updateUsers);
-router.delete("/", checkToken, deleteUser);
+
+router.get("/",checkToken , getUsers); // get data
+router.post("/",checkToken , createUser);  // created
+router.get("/:id",checkToken , getUserByUserId);  // get data id
+router.post("/login", login); // authentication
+router.patch("/",checkToken , updateUsers); //updated
+router.delete("/:id",checkToken , deleteUser);  // deleted
 
 module.exports = router;

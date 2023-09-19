@@ -6,14 +6,21 @@ const {
   updateUser,
   deleteUser
 } = require("./user.service");
-const { hashSync, genSaltSync, compareSync } = require("bcrypt");
+//const { hashSync, genSaltSync, compareSync } = require("bcrypt");
+const bcrypt = require("bcrypt");
+
 const { sign } = require("jsonwebtoken");
 
 module.exports = {
   createUser: (req, res) => {
+
     const body = req.body;
-    const salt = genSaltSync(10);
-    body.password = hashSync(body.password, salt);
+   
+     const salt = bcrypt.genSaltSync(10);
+    if (body.password && salt) {
+      body.password = bcrypt.hashSync(body.password, salt);
+    }
+   //console.log(body); return
     create(body, (err, results) => {
       if (err) {
         console.log(err);
@@ -30,6 +37,7 @@ module.exports = {
   },
   login: (req, res) => {
     const body = req.body;
+   
     getUserByUserEmail(body.email, (err, results) => {
       if (err) {
         console.log(err);
@@ -40,10 +48,10 @@ module.exports = {
           data: "Invalid email or password"
         });
       }
-      const result = compareSync(body.password, results.password);
+      const result = bcrypt.compareSync(body.password, results.password);
       if (result) {
         results.password = undefined;
-        const jsontoken = sign({ result: results }, "qwe1234", {
+        const jsontoken = sign({ result: results }, process.env.JWT, {
           expiresIn: "1h"
         });
         return res.json({
@@ -79,6 +87,7 @@ module.exports = {
       });
     });
   },
+
   getUsers: (req, res) => {
     getUsers((err, results) => {
       if (err) {
@@ -93,8 +102,10 @@ module.exports = {
   },
   updateUsers: (req, res) => {
     const body = req.body;
-    const salt = genSaltSync(10);
-    body.password = hashSync(body.password, salt);
+    const salt = bcrypt.genSaltSync(10);
+    if (body.password && salt) {
+      body.password = bcrypt.hashSync(body.password, salt);
+    }
     updateUser(body, (err, results) => {
       if (err) {
         console.log(err);
@@ -107,21 +118,16 @@ module.exports = {
     });
   },
   deleteUser: (req, res) => {
-    const data = req.body;
+    const data = req.params.id;
     deleteUser(data, (err, results) => {
       if (err) {
         console.log(err);
         return;
       }
-      if (!results) {
-        return res.json({
-          success: 0,
-          message: "Record Not Found"
-        });
-      }
       return res.json({
         success: 1,
-        message: "user deleted successfully"
+        message: "user deleted successfully",
+        data_id: data
       });
     });
   }
